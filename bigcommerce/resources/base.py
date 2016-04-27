@@ -1,8 +1,6 @@
-class Mapping(dict):
+class Mapping(object):
     """
     Mapping
-
-    provides '.' access to dictionary keys
     """
     def __init__(self, mapping, *args, **kwargs):
         """
@@ -13,18 +11,19 @@ class Mapping(dict):
         For example, Orders retains its `coupons` method, instead
         of being replaced by the dict describing the coupons endpoint
         """
-        filter_args = {k: mapping[k] for k in mapping if k not in dir(self)}
-        self.__dict__ = self
-        dict.__init__(self, filter_args, *args, **kwargs)
+        self.mapping = {key: value for key, value in mapping.iteritems() if not key.startswith("_")}
 
     def __str__(self):
         """
         Display as a normal dict, but filter out underscored items first
         """
-        return str({k: self.__dict__[k] for k in self.__dict__ if not k.startswith("_")})
+        return str(self.mapping)
 
     def __repr__(self):
         return "<%s at %s, %s>" % (type(self).__name__, hex(id(self)), str(self))
+
+    def get_dict(self):
+        return self.mapping
 
 
 class ApiResource(Mapping):
